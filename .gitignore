@@ -1,0 +1,32 @@
+# cache and gen
+*.pyc
+__pycache__/
+/README.html
+output.txt
+report.txt
+doc/*.html
+
+# Private
+/.env
+/TODO.txt
+*.db
+tester.py
+secret.txt
+
+# Local
+/safeexec
+/inprs/
+/compilers/
+/OJ_data/
+/OJ_sandbox/
+/inprs
+/compilers
+/OJ_data
+/OJ_sandbox
+
+# OS junk
+*~
+Desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
