@@ -8,7 +8,7 @@ INPR_PATH = os.path.join(OJL3_DIR, "inprs")
 
 SAFEEXEC_ARGS = ["--gid", "10000", "--nproc", "30"]
 
-def run_script(inpr_path, source_path, in_path=None, inpr_options=None, report_path=None, time_lim_s=10, mem_lim_k=50000):
+def run_script(inpr_path, source_path, in_path=None, inpr_options=None, exec_path=None, report_path=None, time_lim_s=10, mem_lim_k=50000):
 	if not inpr_options:
 		inpr_options = []
 	cmdline = [inpr_path] + inpr_options + [source_path]
@@ -23,6 +23,6 @@ def run_script(inpr_path, source_path, in_path=None, inpr_options=None, report_p
 	if in_path: file_obj = open(in_path)
 	else: file_obj = None
 
-	sp = subprocess.Popen(run_path, stdin=file_obj, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+	sp = subprocess.Popen(run_path, stdin=file_obj, cwd=exec_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
 	(out,err) = sp.communicate()
 	return (sp.returncode, out, err)
