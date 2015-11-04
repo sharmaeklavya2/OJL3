@@ -25,6 +25,5 @@ This project's root directory should contain these items (or symlinks to them):
 2. OJ_sandbox (directory where scripts/programs will run)
 3. safeexec
 4. inprs (directory containing symlinks to interpreters, or wrapper programs)
-5. compilers (directory containing symlinks to compilers, or wrapper programs)
 
 More info on these can be found in the 'doc' directory.
