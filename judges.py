@@ -160,7 +160,7 @@ def run_IOCJ(prob_path, prison_cell_path, lang, prog_path, time_lim_s=None, mem_
 #	shutil.rmtree(prison_cell_path)
 	return result
 
-def send_to_IOCJ(prob_path, submission_code, lang, source_path, time_lim_s=None, mem_lim_k=None):
+def send_to_IOCJ(prob_path, submission_code, lang, source_path, time_lim_s=None, mem_lim_k=None, output_lim_k=None):
 	"""
 	This is a SPOJ-style OJ
 	prob_path: Path to problem directory
@@ -173,5 +173,5 @@ def send_to_IOCJ(prob_path, submission_code, lang, source_path, time_lim_s=None,
 	if not success:
 		return ("CMPLE", out)
 	lang2 = langs.get_compiled_lang(lang)
-	result = run_IOCJ(prob_path=prob_path, prison_cell_path=prison_cell_path, lang=lang2, prog_path=prog_path, time_lim_s=time_lim_s, mem_lim_k=mem_lim_k)
+	result = run_IOCJ(prob_path=prob_path, prison_cell_path=prison_cell_path, lang=lang2, prog_path=prog_path, time_lim_s=time_lim_s, mem_lim_k=mem_lim_k, output_lim_k=output_lim_k)
 	return ("OK", result)
