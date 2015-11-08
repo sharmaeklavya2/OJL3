@@ -1,0 +1,8 @@
+{
+	"c": {"name": "C", "ext": "c"},
+	"cpp": {"name": "C++", "ext": "cpp"},
+	"java": {"name": "Java", "ext": "java"},
+	"python2": {"name": "Python 2", "ext": "py"},
+	"python3": {"name": "Python 3", "ext": "py"},
+	"bash": {"name": "Bash", "ext": "sh"}
+}

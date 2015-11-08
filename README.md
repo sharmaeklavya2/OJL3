@@ -4,7 +4,7 @@
 
 ## The layers
 
-I'm making an online judge. It will have 4 layers:
+My competitive programming online judge will have 4 layers:
 
 1. frontend (HTML, CSS, JS)
 2. backend web-framework (probably Django)
@@ -13,7 +13,7 @@ I'm making an online judge. It will have 4 layers:
 
 This repository contains the 3rd layer. It's purpose is to take in the interpreter/compiler name, source code, input data and resource limits and run the script/program to get output. It then gives verdict (AC, WA, TLE, RTE, etc.).
 
-The 4th layer is currently [ochko's safeexec](https://github.com/ochko/safeexec).
+The 4th layer is currently [ochko/safeexec](https://github.com/ochko/safeexec).
 
 Currently this layer does not use chroot jails.
 

@@ -2,6 +2,8 @@ import os
 import subprocess
 import math
 import shutil
+import json
+from collections import OrderedDict
 
 OJL3_DIR = os.path.dirname(os.path.abspath(__file__))
 SANDBOX_PATH = os.path.abspath(os.path.join(OJL3_DIR, "OJ_sandbox"))
@@ -98,7 +100,7 @@ def have_same_content(path1, path2):
 #def have_same_content(path1, path2):
 #	return open(path1, "rb").read() == open(path2, "rb").read()
 
-def make_prison(prison_cell_path, lang, source_path):
+def make_prison(prison_cell_path, lang, source_path, overwrite_prison_cell=False):
 	"""
 	Makes a prison cell where submitted programs can run. It compiles user's code (or copies it if it is not meant to be compiled) into prison_cell_path and returns the path to compiled (or copied) program.
 	prison_cell_path: Path to directory in which program will run
@@ -106,6 +108,8 @@ def make_prison(prison_cell_path, lang, source_path):
 	source_path: path to the source code which has to be run
 	"""
 	# set up prison cell and put compiled source in it
+	if os.path.exists(prison_cell_path) and overwrite_prison_cell:
+		shutil.rmtree(prison_cell_path)
 	os.makedirs(prison_cell_path, mode=0o771)
 #	os.makedirs(user_out_dir, mode=0o771)
 #	os.makedirs(user_err_dir, mode=0o771)
@@ -132,7 +136,7 @@ def run_IOCJ(prob_path, prison_cell_path, lang, prog_path, time_lim_s=None, mem_
 	in_dir = os.path.join(prob_path, "in")
 	out_dir = os.path.join(prob_path, "out")
 	args = langs.get_prog_exec_args(lang, prog_path)
-	result = {}
+	result = OrderedDict()
 	for (curr_in_dir, dir_names, file_names) in os.walk(in_dir):
 		if curr_in_dir==in_dir:
 			rel_path = ''
@@ -156,11 +160,21 @@ def run_IOCJ(prob_path, prison_cell_path, lang, prog_path, time_lim_s=None, mem_
 					verdict = "AC"
 				else:
 					verdict = "WA"
-			result[rel_in_path] = (verdict, time_s, mem_k)
+			result[rel_in_path] = OrderedDict([("verdict", verdict), ("time_s", time_s), ("mem_k", mem_k)])
 #	shutil.rmtree(prison_cell_path)
 	return result
 
-def send_to_IOCJ(prob_path, submission_code, lang, source_path, time_lim_s=None, mem_lim_k=None, output_lim_k=None):
+def get_final_verdict(result):
+	got_ac = True
+	for test_case_result in result.values():
+		if test_case_result["verdict"]!="AC":
+			got_ac = False
+	if got_ac:
+		return "PASS"
+	else:
+		return "FAIL"
+
+def send_to_IOCJ(prob_path, submission_code, lang, source_path, time_lim_s=None, mem_lim_k=None, output_lim_k=None, overwrite_prison_cell=False):
 	"""
 	This is a SPOJ-style OJ
 	prob_path: Path to problem directory
@@ -169,9 +183,25 @@ def send_to_IOCJ(prob_path, submission_code, lang, source_path, time_lim_s=None,
 	source_path: path to the source code which has to be run
 	"""
 	prison_cell_path = os.path.join(SANDBOX_PATH, submission_code)
-	(success, out, prog_path) = make_prison(prison_cell_path=prison_cell_path, lang=lang, source_path=source_path)
+	(success, out, prog_path) = make_prison(prison_cell_path=prison_cell_path, lang=lang, source_path=source_path, overwrite_prison_cell=overwrite_prison_cell)
 	if not success:
 		return ("CMPLE", out)
 	lang2 = langs.get_compiled_lang(lang)
+	try:
+		prob_data_path = os.path.join(prob_path, "data.json")
+		prob_data = json.load(open(prob_data_path))
+		if time_lim_s==None:
+			time_lim_s = prob_data.get("time_lim_s", None)
+		if mem_lim_k==None:
+			mem_lim_k = prob_data.get("mem_lim_k", None)
+		if output_lim_k==None:
+			output_lim_k = prob_data.get("output_lim_k", None)
+	except FileNotFoundError:
+		pass
+	except ValueError as e:
+		print("Invalid JSON in", prob_data_path)
+		print(e)
 	result = run_IOCJ(prob_path=prob_path, prison_cell_path=prison_cell_path, lang=lang2, prog_path=prog_path, time_lim_s=time_lim_s, mem_lim_k=mem_lim_k, output_lim_k=output_lim_k)
-	return ("OK", result)
+	final_verdict = get_final_verdict(result)
+#	shutil.rmtree(prison_cell_path)
+	return (final_verdict, result)
