@@ -21,7 +21,11 @@ def compile_c_or_cpp(source_path, dest_dir_path, compiler_path, compiler_options
 	file_name_wo_ext = os.path.splitext(os.path.basename(source_path))[0]
 	dest_path = os.path.join(dest_dir_path, file_name_wo_ext)
 	sp = subprocess.Popen([compiler_path, source_path] + compiler_options + ["-o", dest_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-	(out, err) = sp.communicate()
+	try:
+		(out, err) = sp.communicate()
+	except UnicodeDecodeError:
+		sp.kill()
+		return (False, "Illegal file-type detected", dest_path)
 	return (sp.returncode==0, out, dest_path)
 
 def compile_c(source_path, dest_dir_path):
@@ -33,7 +37,11 @@ def compile_java(source_path, dest_dir_path):
 	dest_fname = "Main.class"
 	dest_path = os.path.join(dest_dir_path, dest_fname)
 	sp = subprocess.Popen([JAVAC_PATH, source_path, "-d", dest_dir_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-	(out, err) = sp.communicate()
+	try:
+		(out, err) = sp.communicate()
+	except UnicodeDecodeError:
+		sp.kill()
+		return (False, "Illegal file-type detected", dest_path)
 	dest_file_exists = os.path.isfile(dest_path)
 	success = sp.returncode==0 and dest_file_exists
 	if sp.returncode==0 and not dest_file_exists and not out:
@@ -88,7 +96,7 @@ def compile_source(lang, source_path, dest_dir_path):
 	The compiled program might have any name.
 	If the program is not meant to be compiled, it is simply copied to dest_dir_path
 
-	These functions return a tuple (success, out, prog_path)
+	This function returns a tuple (success, out, prog_path)
 	success is True if compilation was successful, otherwise false
 	out contains output of the compiler (both stdout and stderr). It usually consists of error messages or warnings.
 	prog_path is the path to the resulting compiled program

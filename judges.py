@@ -60,7 +60,11 @@ def run_prog(args, in_path=None, out_path=None, err_path=None, time_lim_s=None, 
 	else: err_file_obj = subprocess.PIPE
 
 	sp = subprocess.Popen(run_path, stdin=in_file_obj, cwd=exec_path, stdout=out_file_obj, stderr=err_file_obj, universal_newlines=True)
-	(out,err) = sp.communicate()
+	try:
+		(out, err) = sp.communicate()
+	except UnicodeDecodeError:
+		sp.kill()
+		return ("UNIE", None, "UnicodeDecodeError caught", 0, 0)
 	verdict, time_s, mem_k = parse_report(open(report_path).read().strip().split('\n'), time_lim_s=time_lim_s)
 	return (verdict, out, err, time_s, mem_k)
 
@@ -138,6 +142,8 @@ def run_IOCJ(prob_path, prison_cell_path, lang, prog_path, time_lim_s=None, mem_
 	args = langs.get_prog_exec_args(lang, prog_path)
 	result = OrderedDict()
 	for (curr_in_dir, dir_names, file_names) in os.walk(in_dir):
+		dir_names = sorted(dir_names)
+		file_names = sorted(file_names)
 		if curr_in_dir==in_dir:
 			rel_path = ''
 		else:
