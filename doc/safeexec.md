@@ -1,10 +1,10 @@
 # safeexec
 
-Instructions to set up safeexec can be found in [ochko's safeexec's README.md](https://github.com/ochko/safeexec/blob/master/README.md).
+Instructions to set up safeexec can be found in [cemc's safeexec's README.md](https://github.com/cemc/safeexec/blob/master/README.md).
 
 Basically the steps are:
 
-1. Clone his repository and `cd` into it.
+1. Clone the repository and `cd` into it.
 2. Run `cmake .` and then `make`.
 3. Change user to root: `sudo chown root:root safeexec`.
 4. Set sid bit on executable: `sudo chmod u+s safeexec`.
