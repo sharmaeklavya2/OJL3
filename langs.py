@@ -29,7 +29,7 @@ def compile_c_or_cpp(source_path, dest_dir_path, compiler_path, compiler_options
 	return (sp.returncode==0, out, dest_path)
 
 def compile_c(source_path, dest_dir_path):
-	return compile_c_or_cpp(source_path, dest_dir_path, GCC_PATH)
+	return compile_c_or_cpp(source_path, dest_dir_path, GCC_PATH, ["-lm"])
 def compile_cpp(source_path, dest_dir_path):
 	return compile_c_or_cpp(source_path, dest_dir_path, GPP_PATH)
 
