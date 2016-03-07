@@ -27,3 +27,7 @@ This project's root directory should contain these items (or symlinks to them):
 4. inprs (directory containing symlinks to interpreters, or wrapper programs)
 
 More info on these can be found in the 'doc' directory.
+
+## License
+
+OJL3 is released under the [MIT License](http://www.opensource.org/licenses/MIT).
